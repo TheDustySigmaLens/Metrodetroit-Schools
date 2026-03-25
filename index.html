@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Metro Detroit School Compare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <p class="eyebrow">Metro Detroit high school comparison</p>
+        <h1>Compare public and private schools with transparent sourcing.</h1>
+        <p class="lede">Track SAT/ACT, AP/IB rigor, college outcomes, reviews, and disputed data. The demo includes a scheduled data-update pipeline scaffold and a front-end that can be deployed as a static site.</p>
+      </div>
+      <div class="hero-panel">
+        <div class="metric">
+          <span class="metric-label">Schools loaded</span>
+          <strong id="metric-school-count">0</strong>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Reviewed schools</span>
+          <strong id="metric-reviewed-count">0</strong>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Metrics tracked</span>
+          <strong>16</strong>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel filters-panel">
+      <div class="panel-head">
+        <h2>Filters and compare controls</h2>
+        <p>Use filters to build a short list, then compare schools side by side.</p>
+      </div>
+      <div class="filters-grid">
+        <label>
+          Search
+          <input id="searchInput" type="search" placeholder="Search by school or city" />
+        </label>
+        <label>
+          Sector
+          <select id="sectorFilter">
+            <option value="all">All</option>
+            <option value="Public">Public</option>
+            <option value="Private">Private</option>
+            <option value="Charter">Charter</option>
+          </select>
+        </label>
+        <label>
+          County
+          <select id="countyFilter">
+            <option value="all">All</option>
+          </select>
+        </label>
+        <label>
+          Sort by
+          <select id="sortBy">
+            <option value="name">Name</option>
+            <option value="sat_avg">SAT average</option>
+            <option value="ap_participation_pct">AP/IB participation</option>
+            <option value="college_4yr_pct">4-year college enrollment</option>
+            <option value="acceptance_proxy">Selectivity / fit score</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="panel analytics-panel">
+      <div class="panel-head">
+        <h2>Analytical snapshot</h2>
+        <p>Instantly compare the filtered pool. These charts recompute whenever you change filters.</p>
+      </div>
+      <div class="analytics-grid">
+        <div class="stat-card"><span>Average SAT</span><strong id="avgSat">—</strong></div>
+        <div class="stat-card"><span>Average ACT</span><strong id="avgAct">—</strong></div>
+        <div class="stat-card"><span>Avg AP/IB participation</span><strong id="avgAp">—</strong></div>
+        <div class="stat-card"><span>Avg 4-year college enrollment</span><strong id="avgCollege">—</strong></div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-card">
+          <h3>SAT by school</h3>
+          <canvas id="satChart" width="600" height="280"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>College outcomes mix</h3>
+          <canvas id="collegeChart" width="600" height="280"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>School explorer</h2>
+        <p>Each card includes data quality badges and user reviews.</p>
+      </div>
+      <div id="schoolGrid" class="school-grid"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Comparison table</h2>
+        <p>Select schools on the cards to pin them here.</p>
+      </div>
+      <div class="table-wrap">
+        <table id="comparisonTable">
+          <thead>
+            <tr>
+              <th>Metric</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel review-section">
+      <div class="panel-head">
+        <h2>Leave a school review</h2>
+        <p>Reviews in this demo are stored in the browser. For production, wire the included endpoint template to a database.</p>
+      </div>
+      <form id="reviewForm" class="form-grid">
+        <label>
+          School
+          <select id="reviewSchool" required></select>
+        </label>
+        <label>
+          Reviewer name
+          <input id="reviewerName" type="text" maxlength="60" required />
+        </label>
+        <label>
+          Rating
+          <select id="reviewRating" required>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+        </label>
+        <label class="full-width">
+          Review
+          <textarea id="reviewBody" rows="4" maxlength="600" required></textarea>
+        </label>
+        <button type="submit" class="primary-btn">Submit review</button>
+      </form>
+      <div id="reviewsList" class="reviews-list"></div>
+    </section>
+
+    <section class="panel dispute-section">
+      <div class="panel-head">
+        <h2>Report incorrect data</h2>
+        <p>Use the form to prefill a dispute email. In production, connect the included serverless function template to your support inbox.</p>
+      </div>
+      <form id="disputeForm" class="form-grid">
+        <label>
+          School
+          <select id="disputeSchool" required></select>
+        </label>
+        <label>
+          Contact email
+          <input id="disputeEmail" type="email" required />
+        </label>
+        <label>
+          Metric in dispute
+          <input id="disputeMetric" type="text" placeholder="SAT average, AP courses, college list..." required />
+        </label>
+        <label class="full-width">
+          Supporting detail
+          <textarea id="disputeDetails" rows="4" maxlength="800" required></textarea>
+        </label>
+        <button type="submit" class="primary-btn">Create dispute email</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Built as a starter for a Metro Detroit school comparison platform. Public-school metrics can be refreshed from official state and federal sources; private-school metrics usually require school-reported profiles or direct outreach.</p>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
